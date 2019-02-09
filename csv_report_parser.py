@@ -41,7 +41,11 @@ def csv_report_parser(file):
             previous_date = current_date
 
         # process data
-        country_code = subdivisions.lookup(city).country_code
+        try:
+            country_code = subdivisions.lookup(city).country_code
+        except LookupError:
+            country_code = "XXX"
+
         clicks = float(ctr[:-1]) / 100 * ads
 
         # aggregate data
