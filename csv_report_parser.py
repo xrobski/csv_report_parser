@@ -8,8 +8,7 @@ def csv_report_parser(file):
     # file open, read csv file
     with open(file, "r", encoding="utf-8-sig") as csv_file:
         csv_reader = csv.reader(csv_file)
-        #TODO: czy nie ma pustych wierszy?
-        rows = list(csv_reader)
+        rows = [line for line in csv_reader if line]
         sorted_rows = sorted(rows, key=lambda x: datetime.strptime(x[0], '%m/%d/%Y'))
 
     output_data = []
