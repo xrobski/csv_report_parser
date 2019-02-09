@@ -1,11 +1,15 @@
 import csv
-from pprint import pprint
 from datetime import datetime
 from pycountry import subdivisions
 
 
 def csv_report_parser(file):
-    # file open, read csv file
+    """ Return converted csv file to following format:
+     date (YYYY-MM-DD),three letter country code (or XXX for unknown states),
+     number of impressions, number ofclicks (rounded, assuming the CTR is exact)
+     Rows are sorted lexicographically by date followed by the country code.
+     """
+    # File open, read csv file
     with open(file, "r", encoding="utf-8-sig") as csv_file:
         csv_reader = csv.reader(csv_file)
         rows = [line for line in csv_reader if line]
@@ -39,7 +43,7 @@ def csv_report_parser(file):
             # Reset to new date
             previous_date = current_date
 
-        # process data
+        # Process data
         try:
             country_code = subdivisions.lookup(city).country_code
         except LookupError:
@@ -47,19 +51,15 @@ def csv_report_parser(file):
 
         clicks = float(ctr[:-1]) / 100 * ads
 
-        # aggregate data
+        # Aggregate data
         if country_code in aggregated_data:
             aggregated_data[country_code][0] += ads
             aggregated_data[country_code][1] += clicks
         else:
             aggregated_data[country_code] = [ads,clicks]
 
-    # save output to file
+    # Save output to file
     with open("output.csv", "w") as output:
         writer = csv.writer(output, lineterminator='\n')
         for row in output_data:
             writer.writerow([row])
-
-
-if __name__ == '__main__':
-    csv_report_parser('test1.csv')
